@@ -5,14 +5,24 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 
 import com.xingyun.dht.block.intf.IBodySteam;
+import com.xingyun.dht.block.wallet.WalletAddress;
 
 public class BlockBody implements IBodySteam{
 	private final Transaction[] transactions;
 	
-	protected byte[] getMerkleRootHash(){
-		return new byte[32];
+	protected byte[] getMerkleRootHash() throws IOException{
+		ByteArrayOutputStream baos=new ByteArrayOutputStream();
+		for(int i=0;i<transactions.length;i++){
+			baos.write(transactions[0].getTransactionHash());
+		}
+		byte[] data=baos.toByteArray();
+		if(data.length!=transactions.length*32){
+			throw new RuntimeException("data_length_error");
+		}
+		return WalletAddress.getSHA256(data, 0, data.length);
 	}
 	
 	public BlockBody(Transaction[] transactions){

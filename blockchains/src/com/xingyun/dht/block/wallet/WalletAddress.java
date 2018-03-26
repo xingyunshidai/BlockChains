@@ -113,7 +113,7 @@ public class WalletAddress {
 		return new WalletAddress(pubHash);
 	}
 	
-	public String formatAddress() throws NoSuchAlgorithmException{
+	public String formatAddress(){
 		byte[] addressBytes=new byte[28];
 		addressBytes[0]=ADDRESS_VER;
 		addressBytes[21]=ADDRESS_TAG[0];
@@ -166,12 +166,15 @@ public class WalletAddress {
 	 * 利用java原生的摘要实现SHA256加密
 	 * 
 	 * @return
-	 * @throws NoSuchAlgorithmException
 	 */
-	public static byte[] getSHA256(byte[] input, int offset, int len) throws NoSuchAlgorithmException {
+	public static byte[] getSHA256(byte[] input, int offset, int len){
+		try{
 		MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
 		messageDigest.update(input, offset, len);
 		return messageDigest.digest();
+		}catch(NoSuchAlgorithmException e){
+			throw new RuntimeException("not_support_SHA-256");
+		}
 	}
 
 	/**

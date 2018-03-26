@@ -26,14 +26,14 @@ public class BlockHead implements IBlockHead{
 	//时间戳(8byte)
 	private final long time;
 	
-	protected BlockHead(BlockBody currentBlockBody){
+	protected BlockHead(BlockBody currentBlockBody) throws NoSuchAlgorithmException, IOException{
 		this.blockIndex=0;
 		this.prevBlockHash=new byte[32];
 		this.merkleRootHash=currentBlockBody.getMerkleRootHash();
 		this.time=System.currentTimeMillis();
 	}
 	
-	protected BlockHead(BlockHead lastBlockHead,BlockBody currentBlockBody) throws NoSuchAlgorithmException, IOException {
+	protected BlockHead(BlockHead lastBlockHead,BlockBody currentBlockBody) throws IOException {
 		this.blockIndex=lastBlockHead.getBlockIndex()+1;
 		this.prevBlockHash=lastBlockHead.getBlockHash();
 		this.merkleRootHash=currentBlockBody.getMerkleRootHash();
@@ -66,7 +66,7 @@ public class BlockHead implements IBlockHead{
 	}
 	
 	@Override
-	public byte[] getBlockHash() throws NoSuchAlgorithmException, IOException{
+	public byte[] getBlockHash() throws IOException{
 		byte[] headBytes=getHeadBytes();
 		return WalletAddress.getSHA256(headBytes, 0, headBytes.length);
 	}
@@ -77,5 +77,9 @@ public class BlockHead implements IBlockHead{
 	
 	public byte[] getPrevBlockHash(){
 		return this.prevBlockHash;
+	}
+
+	public byte[] getMerkleRootHash() {
+		return this.merkleRootHash;
 	}
 }

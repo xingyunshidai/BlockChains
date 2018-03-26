@@ -5,6 +5,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
 
 import com.xingyun.dht.block.intf.IBlockSteam;
 
@@ -22,9 +23,11 @@ public class Block implements IBlockSteam{
 	/**
 	 * 创世区块
 	 * @param blockBody
+	 * @throws IOException 
+	 * @throws NoSuchAlgorithmException 
 	 */
 	@Deprecated
-	public Block(BlockBody blockBody){
+	public Block(BlockBody blockBody) throws NoSuchAlgorithmException, IOException{
 		this.blockHead=new BlockHead(blockBody);
 		this.blockBody=blockBody;
 	}
@@ -36,7 +39,7 @@ public class Block implements IBlockSteam{
 	 * @throws NoSuchAlgorithmException
 	 * @throws IOException
 	 */
-	public Block(Block lastBlock,BlockBody blockBody) throws NoSuchAlgorithmException, IOException {
+	public Block(Block lastBlock,BlockBody blockBody) throws IOException {
 		this.blockHead=new BlockHead(lastBlock.getBlockHead(),blockBody);
 		this.blockBody=blockBody;
 	}
@@ -56,6 +59,12 @@ public class Block implements IBlockSteam{
 		byte[] bodyBytes=new byte[bodyLength];
 		dis.readFully(bodyBytes);
 		this.blockBody=new BlockBody(bodyBytes);
+		
+		byte[] merkleRootHash1=this.blockHead.getMerkleRootHash();
+		byte[] merkleRootHash2=this.blockBody.getMerkleRootHash();
+		if(!Arrays.equals(merkleRootHash1, merkleRootHash2)){
+			throw new RuntimeException("merkleRootHash_check_error");
+		}
 	}
 	
 	public static Block parserBlock(DataInputStream dis) throws IOException{

@@ -36,7 +36,7 @@ public class BlockChain {
 		return BlockChain.blockChain;
 	}
 	
-	public Block loadFromDir(String dir) throws IOException{
+	public Block loadFromDir(String dir) throws IOException, NoSuchAlgorithmException{
 		if(this.currentIndex!=-1){
 			throw new RuntimeException("current_index_error");
 		}
@@ -78,7 +78,7 @@ public class BlockChain {
 		}
 	}
 	
-	private Block loadDataFile(File dataFile) throws IOException{
+	private Block loadDataFile(File dataFile) throws IOException, NoSuchAlgorithmException{
 		DataInputStream dis=new DataInputStream(new FileInputStream(dataFile));
 		try{
 			Block lastBlock=null;
@@ -148,7 +148,7 @@ public class BlockChain {
 		return "blocks/"+a+"/"+b+"/dht-"+c+".blk";
 	}
 	
-	private void checkBlock(byte[] blockData) throws IOException, NoSuchAlgorithmException{
+	private void checkBlock(byte[] blockData) throws IOException{
 		DataInputStream dis=new DataInputStream(new ByteArrayInputStream(blockData));
 		Block tempBlock=Block.parserBlock(dis);
 		byte[] prevBlockHash=tempBlock.getBlockHead().getPrevBlockHash();
